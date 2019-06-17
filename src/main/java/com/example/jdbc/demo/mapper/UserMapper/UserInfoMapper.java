@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface UserInfoMapper {
     List<User> findUserList();
+
+    int insert(User user);
 }

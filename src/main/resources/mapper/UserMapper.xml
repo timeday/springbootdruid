@@ -5,4 +5,9 @@
     <select id="findUserList" resultType="com.example.jdbc.demo.entity.User">
               select  * from cat_user;
     </select>
+
+    <insert id="insert" parameterType="com.example.jdbc.demo.entity.User">
+        insert into cat_user(`name`) value (#{name});
+    </insert>
+
 </mapper>

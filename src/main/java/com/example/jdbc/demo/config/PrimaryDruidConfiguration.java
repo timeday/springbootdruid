@@ -1,6 +1,8 @@
 package com.example.jdbc.demo.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.pool.xa.DruidXADataSource;
+import com.atomikos.jdbc.AtomikosDataSourceBean;
 import com.example.jdbc.demo.utils.AesUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -61,8 +63,9 @@ public class PrimaryDruidConfiguration {
     //@ConfigurationProperties(prefix = "spring.datasource.one")
     @Primary
     public DataSource customDataSource() {
-        //return DataSourceBuilder.create().build();
-        DruidDataSource datasource = new DruidDataSource();
+        //封装基本数据源参数对象
+        //DruidDataSource datasource=new DruidDataSource();
+        DruidXADataSource datasource = new DruidXADataSource();
         datasource.setUrl(this.dbUrl);
         datasource.setUsername(username);
         datasource.setPassword(password);
@@ -87,7 +90,13 @@ public class PrimaryDruidConfiguration {
             System.err.println("druid configuration initialization filter: "+ e);
         }
         datasource.setConnectionProperties(connectionProperties);
-        return datasource;
+        //return datasource;
+        //创建分布式数据源对象
+        AtomikosDataSourceBean sourceBean = new AtomikosDataSourceBean();
+        sourceBean.setXaDataSource(datasource);
+        //设置唯一的标识
+        sourceBean.setUniqueResourceName("oneData");
+        return sourceBean;
     }
 
     @Bean(name = "oneSqlSessionFactory")
@@ -100,11 +109,12 @@ public class PrimaryDruidConfiguration {
         return bean.getObject();
     }
 
-    @Bean(name = "oneTransactionManager")
+    //分布式不用配置
+    /*@Bean(name = "oneTransactionManager")
     @Primary
     public DataSourceTransactionManager customTransactionManager(@Qualifier("oneDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
-    }
+    }*/
 
     @Bean(name = "oneSqlSessionTemplate")
     @Primary

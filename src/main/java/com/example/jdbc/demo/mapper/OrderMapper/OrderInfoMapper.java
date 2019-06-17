@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface OrderInfoMapper {
     List<Order> findOrderList();
+
+    int insert(Order order);
 }

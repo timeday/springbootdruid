@@ -19,4 +19,9 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> list() {
         return orderMapper.findOrderList();
     }
+
+    @Override
+    public int insert(Order order) {
+        return orderMapper.insert(order);
+    }
 }

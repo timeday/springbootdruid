@@ -1,6 +1,8 @@
 package com.example.jdbc.demo.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.pool.xa.DruidXADataSource;
+import com.atomikos.jdbc.AtomikosDataSourceBean;
 import com.example.jdbc.demo.utils.AesUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -62,11 +64,8 @@ public class SecondDruidConfiguration{
 
 
     @Bean(name = "twoDataSource")
-    //@ConfigurationProperties(prefix = "spring.datasource.two")
     public DataSource customDataSource() {
-       // return DataSourceBuilder.create().build();
-        //return DataSourceBuilder.create().build();
-        DruidDataSource datasource = new DruidDataSource();
+        DruidXADataSource datasource = new DruidXADataSource();
         datasource.setUrl(this.dbUrl);
         datasource.setUsername(username);
         datasource.setPassword(password);
@@ -91,8 +90,14 @@ public class SecondDruidConfiguration{
             System.err.println("druid configuration initialization filter: "+ e);
         }
         datasource.setConnectionProperties(connectionProperties);
-        return datasource;
+
+        AtomikosDataSourceBean sourceBean = new AtomikosDataSourceBean();
+
+        sourceBean.setXaDataSource(datasource);
+        sourceBean.setUniqueResourceName("twoData");
+        return sourceBean;
     }
+
 
     @Bean(name = "twoSqlSessionFactory")
     public SqlSessionFactory customSqlSessionFactory(@Qualifier("twoDataSource") DataSource dataSource) throws Exception {
@@ -103,10 +108,10 @@ public class SecondDruidConfiguration{
         return bean.getObject();
     }
 
-    @Bean(name = "twoTransactionManager")
+    /*@Bean(name = "twoTransactionManager")
     public DataSourceTransactionManager customTransactionManager(@Qualifier("twoDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
-    }
+    }*/
 
     @Bean(name = "twoSqlSessionTemplate")
     public SqlSessionTemplate customSqlSessionTemplate(@Qualifier("twoSqlSessionFactory") SqlSessionFactory sqlSessionFactory) throws Exception {

@@ -8,5 +8,8 @@ public interface UserService {
 
     public List<User> list();
 
+    int insert(User user);
+
+    void testTransage();
 
 }

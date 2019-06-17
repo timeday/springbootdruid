@@ -2,6 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.jdbc.demo.mapper.OrderMapper.OrderInfoMapper">
 
+    <insert id="insert" parameterType="com.example.jdbc.demo.entity.Order">
+        insert into cat_order(`name`) value (#{name});
+    </insert>
+
     <select id="findOrderList" resultType="com.example.jdbc.demo.entity.Order">
         select  * from cat_order;
     </select>
